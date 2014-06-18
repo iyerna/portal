@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!--
+========================================================================================================================
+beans-integration.xml
+
+========================================================================================================================
+-->
+<!-- http://www.rabbitmq.com/amqp-0-9-1-reference.html -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-amqp="http://www.springframework.org/schema/integration/amqp"
+	xmlns:int-xml="http://www.springframework.org/schema/integration/xml"
+	xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/integration
+		http://www.springframework.org/schema/integration/spring-integration-2.2.xsd
+		http://www.springframework.org/schema/integration/amqp
+		http://www.springframework.org/schema/integration/amqp/spring-integration-amqp-2.2.xsd
+		http://www.springframework.org/schema/integration/mail
+		http://www.springframework.org/schema/integration/mail/spring-integration-mail-2.2.xsd
+		http://www.springframework.org/schema/integration/xml
+		http://www.springframework.org/schema/integration/xml/spring-integration-xml-2.2.xsd
+		http://www.springframework.org/schema/oxm
+		http://www.springframework.org/schema/oxm/spring-oxm-3.1.xsd
+		http://www.springframework.org/schema/rabbit
+		http://www.springframework.org/schema/rabbit/spring-rabbit.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-3.1.xsd
+		">
+		
+		<!-- =========================================================================================================== -->
+	<!-- Rabbit                                                                                                      -->
+	<!-- =========================================================================================================== -->
+	
+	<rabbit:connection-factory id="rabbitConnectionFactory" host="localhost" username="guest" password="guest" />
+	
+	<!-- The <rabbit:admin/> declaration by default automatically looks for beans of type Queue, Exchange and Binding
+	     and declares them to the broker on behalf of the user. -->
+	<rabbit:admin connection-factory="rabbitConnectionFactory" />
+	
+	<rabbit:queue name="createTicketRequest.queue" />
+	<rabbit:queue name="findAllTicketsRequest.queue" />
+	<rabbit:queue name="createCustomerRequest.queue" />
+	<rabbit:queue name="findAllCustomersRequest.queue" />
+	
+	<!-- http://static.springsource.org/spring-amqp/reference/html/amqp.html#d4e288 -->
+	<rabbit:template id="amqpTemplate"
+		connection-factory="rabbitConnectionFactory"
+		message-converter="marshallingMessageConverter" />
+	
+		
+	<!-- =========================================================================================================== -->
+	<!-- OXM                                                                                                         -->
+	<!-- =========================================================================================================== -->
+	
+	<bean id="marshallingMessageConverter"
+		class="org.springframework.amqp.support.converter.MarshallingMessageConverter"
+		p:contentType="application/xml">	
+		<constructor-arg ref="marshaller" />
+	</bean>
+	
+	<oxm:jaxb2-marshaller id="marshaller">
+		<oxm:class-to-be-bound name="com.customerportal.cdm.DummyPayload" />
+		<oxm:class-to-be-bound name="com.customerportal.cdm.Ticket" />
+		<oxm:class-to-be-bound name="com.customerportal.cdm.Ticket$TicketList" />
+		<oxm:class-to-be-bound name="com.customerportal.cdm.Customer" />
+		<oxm:class-to-be-bound name="com.customerportal.cdm.Customer$CustomerList" />
+		<oxm:class-to-be-bound name="com.customerportal.cdm.TicketRequest" />
+		<oxm:class-to-be-bound name="com.customerportal.cdm.CustomerRequest" />
+		<oxm:class-to-be-bound name="com.customerportal.cdm.TicketCategory" />
+		<oxm:class-to-be-bound name="com.customerportal.cdm.TicketCategory$TicketCategoryList" />
+		<oxm:class-to-be-bound name="com.customerportal.cdm.TicketCategoryRequest" />
+	</oxm:jaxb2-marshaller>
+	
+	
+	<!-- =========================================================================================================== -->
+	<!-- Spring Integration                                                                                          -->
+	<!-- =========================================================================================================== -->
+	
+	<!-- Gateway auto-creates a temporary, anonymous reply channel and listens for the reply. -->
+	<!-- FIXME Define error channel on the gateway -->
+	<int:gateway
+		service-interface="com.customerportal.integration.gateway.TicketGateway"
+		default-request-channel="helpDeskRequestChannel"
+		default-request-timeout="2000"
+		default-reply-timeout="2000">
+		
+		<int:method name="createTicket" request-channel="createTicketRequestChannel" />
+		
+		<!-- http://static.springsource.org/spring-integration/docs/2.2.0.RELEASE/reference/html/messaging-endpoints-chapter.html#gateway-calling-no-argument-methods -->
+		<int:method name="findAllTickets" payload-expression="new com.customerportal.cdm.DummyPayload()">
+			<int:header name="requestType" value="findAllTicketsRequest" />
+		</int:method>
+	</int:gateway>
+	
+	<!-- Create ticket (request only) -->
+	<int:channel id="createTicketRequestChannel" />
+	
+	<int-amqp:outbound-channel-adapter
+		amqp-template="amqpTemplate"
+		channel="createTicketRequestChannel"
+		routing-key="createTicketRequest.queue" />
+	
+	<!-- Find tickets -->
+	
+	<!--  helpdesk input channel definitions -->
+	<!-- General gateway (request/reply) -->
+	<int:channel id="helpDeskRequestChannel">
+		<int:interceptors>
+			<int:wire-tap channel="logger" />
+		</int:interceptors>
+	</int:channel>
+	
+	<!-- mapped-request-headers="type" passes along our "type" SI message header as an AMQP custom message property -->
+	<int-amqp:outbound-gateway
+		amqp-template="amqpTemplate"
+		request-channel="helpDeskRequestChannel"
+		routing-key-expression="headers['requestType'] + '.queue'"
+		mapped-request-headers="requestType" />
+		
+	<context:component-scan base-package="com.customerportal.integration.transformer" />
+	
+	<!-- From AMQP to SI -->
+	<int-amqp:inbound-channel-adapter
+		queue-names="createTicketRequest.queue"
+		channel="createTicketRequestChannel"
+		message-converter="marshallingMessageConverter" />
+	
+	<int:chain input-channel="createTicketRequestChannel" output-channel="nullChannel">
+		<int:transformer ref="ticketTransformer" method="toEntity" />
+		<int:service-activator expression="@ticketRepository.save(payload)" />
+	</int:chain>
+	
+	<!-- From AMQP to SI -->
+	<!-- http://static.springsource.org/spring-integration/api/org/springframework/integration/amqp/inbound/AmqpInboundGateway.html -->
+	<!-- mapped-request-headers="requestType" passes along our "requestType" AMQP custom message property as a custom SI message header -->
+	<int-amqp:inbound-gateway 
+		queue-names="findAllTicketsRequest.queue"
+		request-channel="helpDeskRequestChannel"
+		mapped-request-headers="requestType" 
+		message-converter="marshallingMessageConverter" />
+	
+	<int:logging-channel-adapter id="logger" level="DEBUG" log-full-message="true" />
+	
+	<!-- http://forum.springsource.org/showthread.php?125777-keeping-default-headers-in-amqp-outbound-channel-adapters -->
+	<int:header-value-router input-channel="helpDeskRequestChannel" header-name="requestType">
+		<int:mapping value="findAllTicketsRequest" channel="findAllTicketsRequestChannel" />
+	</int:header-value-router>
+	
+	<int:channel id="findAllTicketsRequestChannel"/>
+	
+	<int:chain input-channel="findAllTicketsRequestChannel">
+		<int:service-activator expression="@ticketRepository.findAll()" />
+		<int:transformer ref="ticketListTransformer" method="toDto" />
+	</int:chain>
+	
+	<int:gateway
+		service-interface="com.customerportal.integration.gateway.CustomerGateway"
+		default-request-channel="helpDeskRequestChannel"
+		default-request-timeout="2000"
+		default-reply-timeout="2000">
+		
+		<int:method name="createCustomer" request-channel="createCustomerRequestChannel" />
+		
+		<!-- http://static.springsource.org/spring-integration/docs/2.2.0.RELEASE/reference/html/messaging-endpoints-chapter.html#gateway-calling-no-argument-methods -->
+		<int:method name="findAllCustomers" payload-expression="new com.customerportal.cdm.DummyPayload()">
+			<int:header name="requestType" value="findAllCustomersRequest" />
+		</int:method>
+	</int:gateway>
+	
+	<!-- Create customer (request only) -->
+	<int:channel id="createCustomerRequestChannel" />
+	
+	<int-amqp:outbound-channel-adapter
+		amqp-template="amqpTemplate"
+		channel="createCustomerRequestChannel"
+		routing-key="createCustomerRequest.queue" />
+		
+	<int-amqp:inbound-channel-adapter
+		queue-names="createCustomerRequest.queue"
+		channel="createCustomerRequestChannel"
+		message-converter="marshallingMessageConverter" />
+	
+	<int:chain input-channel="createCustomerRequestChannel" output-channel="nullChannel">
+		<int:transformer ref="customerTransformer" method="toEntity" />
+		<int:service-activator expression="@userRepository.save(payload)" />
+	</int:chain>
+	
+	<!-- From AMQP to SI -->
+	<!-- http://static.springsource.org/spring-integration/api/org/springframework/integration/amqp/inbound/AmqpInboundGateway.html -->
+	<!-- mapped-request-headers="requestType" passes along our "requestType" AMQP custom message property as a custom SI message header -->
+	<int-amqp:inbound-gateway
+		queue-names="findAllCustomersRequest.queue"
+		request-channel="helpDeskRequestChannel"
+		mapped-request-headers="requestType" 
+		message-converter="marshallingMessageConverter" />
+	
+	<!-- http://forum.springsource.org/showthread.php?125777-keeping-default-headers-in-amqp-outbound-channel-adapters -->
+	<int:header-value-router input-channel="helpDeskRequestChannel" header-name="requestType">
+		<int:mapping value="findAllCustomersRequest" channel="findAllCustomersRequestChannel" />
+	</int:header-value-router>
+	
+	<int:channel id="findAllCustomersRequest"/>
+	
+	<int:chain input-channel="findAllCustomersRequestChannel">
+		<int:service-activator expression="@userRepository.findAll()" />
+		<int:transformer ref="customerListTransformer" method="toDto" />
+	</int:chain>
+		
+</beans>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+		"-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+		"http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+
+<tiles-definitions>
+
+	<!-- Templates-->
+	<definition name="pageTemplate" template="/WEB-INF/jsp/templates/pageTemplate.jsp" />
+	
+	<!-- Pages -->
+	<definition name="home" extends="pageTemplate">
+		<put-attribute name="content" value="/WEB-INF/jsp/home.jsp" />
+	</definition>
+	<definition name="login" extends="pageTemplate">
+		<put-attribute name="content" value="/WEB-INF/jsp/login.jsp" />
+	</definition>
+	<definition name="accessDenied" extends="pageTemplate">
+		<put-attribute name="content" value="/WEB-INF/jsp/accessDenied.jsp" />
+	</definition>
+	<definition name="newTicket" extends="pageTemplate">
+		<put-attribute name="content" value="/WEB-INF/jsp/tickets/newTicket.jsp" />
+	</definition>
+</tiles-definitions>

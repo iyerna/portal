@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+========================================================================================================================
+pom.xml
+
+========================================================================================================================
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.customerportal</groupId>
+	<version>1.0.0</version>
+	<artifactId>com.customerportal</artifactId>
+	<packaging>war</packaging>
+	
+	<name>Customer Portal</name>
+	<description></description>
+	<url></url>
+		
+	<dependencies>	
+		<!-- Java -->
+			<!-- Java -->
+			<dependency>
+				<groupId>javax.inject</groupId>
+				<artifactId>javax.inject</artifactId>
+				<version>1</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>jstl</artifactId>
+				<version>1.2</version>
+				<scope>runtime</scope>
+			</dependency> 
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>servlet-api</artifactId>
+				<version>2.5</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.validation</groupId>
+				<artifactId>validation-api</artifactId>
+				<version>1.0.0.GA</version>
+			</dependency>
+			
+			<!-- Spring -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-aop</artifactId>
+				<version>3.1.3.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-asm</artifactId>
+				<version>3.1.3.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-beans</artifactId>
+				<version>3.1.3.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>3.1.3.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context-support</artifactId>
+				<version>3.1.3.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<version>3.1.3.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-expression</artifactId>
+				<version>3.1.3.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-jdbc</artifactId>
+				<version>3.1.3.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-orm</artifactId>
+				<version>3.1.3.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-oxm</artifactId>
+				<version>3.1.3.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-tx</artifactId>
+				<version>3.1.3.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-web</artifactId>
+				<version>3.1.3.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-webmvc</artifactId>
+				<version>3.1.3.RELEASE</version>
+			</dependency>
+			
+			<!-- Spring Data -->
+			<!-- Spring HATEOAS -->
+			<dependency>
+				<groupId>org.springframework.hateoas</groupId>
+				<artifactId>spring-hateoas</artifactId>
+				<version>0.3.0.RELEASE</version>
+			</dependency>
+			
+			<!-- Spring Integration -->
+			<dependency>
+				<groupId>org.springframework.integration</groupId>
+				<artifactId>spring-integration-core</artifactId>
+				<version>2.2.0.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.integration</groupId>
+				<artifactId>spring-integration-amqp</artifactId>
+				<version>2.2.0.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.integration</groupId>
+				<artifactId>spring-integration-xml</artifactId>
+				<version>2.2.0.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.amqp</groupId>
+				<artifactId>spring-rabbit</artifactId>
+				<version>1.1.0.RELEASE</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-core</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-tx</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+		
+			<!-- Spring Security -->
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-config</artifactId>
+				<version>3.1.3.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-core</artifactId>
+				<version>3.1.3.RELEASE</version>
+			</dependency> 
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-taglibs</artifactId>
+				<version>3.1.3.RELEASE</version>
+			</dependency> 
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-web</artifactId>
+				<version>3.1.3.RELEASE</version>
+			</dependency> 
+			
+			<!-- Hibernate -->
+			<!-- Note that there's no official Sun/Oracle JPA 2.0 artifact, so we're using Hibernate's. -->
+			<!-- http://stackoverflow.com/questions/3893857/jpa-2-0-api-maven-artifact -->
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-core</artifactId>
+				<version>4.1.6.Final</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-entitymanager</artifactId>
+				<version>4.1.6.Final</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-validator</artifactId>
+				<version>4.3.0.Final</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate.javax.persistence</groupId>
+				<artifactId>hibernate-jpa-2.0-api</artifactId>
+				<version>1.0.1.Final</version>
+			</dependency>
+			
+			<!-- Apache Commons -->
+			<dependency>
+				<groupId>commons-dbcp</groupId>
+				<artifactId>commons-dbcp</artifactId>
+				<version>1.4</version>
+			</dependency>
+			
+			<!-- Apache Tiles -->
+			<dependency>
+				<groupId>org.apache.tiles</groupId>
+				<artifactId>tiles-core</artifactId>
+				<version>2.2.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.tiles</groupId>
+				<artifactId>tiles-el</artifactId>
+				<version>2.2.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.tiles</groupId>
+				<artifactId>tiles-jsp</artifactId>
+				<version>2.2.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.tiles</groupId>
+				<artifactId>tiles-servlet</artifactId>
+				<version>2.2.2</version>
+			</dependency>
+			
+			<!-- Logging dependencies -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jcl-over-slf4j</artifactId>
+				<version>1.6.6</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.6.6</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>1.6.6</version>
+				<scope>runtime</scope>
+			</dependency>
+			
+			<!-- Other -->
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>5.1.21</version>
+				<scope>runtime</scope>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>2.2.3</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.customerportal</groupId>
+				<artifactId>com.customerportal.cdm</artifactId>
+				<version>1.0.0</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.springframework.data</groupId>
+				<artifactId>spring-data-commons-core</artifactId>
+				<version>1.4.0.RELEASE</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-beans</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-core</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>junit</groupId>
+						<artifactId>junit-dep</artifactId>
+					</exclusion>
+				</exclusions>
+	        </dependency>
+			<dependency>
+				<groupId>org.springframework.data</groupId>
+				<artifactId>spring-data-jpa</artifactId>
+				<version>1.2.0.RELEASE</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-beans</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-core</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-orm</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-tx</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>junit</groupId>
+						<artifactId>junit-dep</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.data</groupId>
+				<artifactId>spring-data-rest-webmvc</artifactId>
+				<version>1.0.0.RELEASE</version>
+			</dependency> 
+			
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>maven-jetty-plugin</artifactId>
+				<version>6.1.21</version>
+				<configuration>
+					<jettyEnvXml>sample_conf/jetty-env.xml</jettyEnvXml>
+					
+					<!-- See http://docs.codehaus.org/display/JETTY/Maven+Jetty+Plugin -->
+					<webAppConfig>
+						<contextPath>/</contextPath>
+						<extraClasspath>sample_conf/classes</extraClasspath>
+					</webAppConfig>
+					<connectors>
+						<connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+							<port>8180</port>
+							<maxIdleTime>60000</maxIdleTime>
+						</connector>
+					</connectors>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
